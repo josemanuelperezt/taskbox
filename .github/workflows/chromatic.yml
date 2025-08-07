@@ -9,12 +9,23 @@ jobs:
   chromatic:
     name: 'Run Chromatic'
     runs-on: ubuntu-latest
-    # Job steps
     steps:
       - uses: actions/checkout@v4
         with:
           fetch-depth: 0
-      - run: npm run chromatic
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          CHROMATIC_PROJECT_TOKEN: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
+      # Instala dependencias usando npm
+      - run: npm ci
+
+      # Añade Chromatic como paso en el workflow
+      - uses: chromaui/action@latest
+        with:
+          # Token del proyecto Chromatic (definido en GitHub Secrets)
+          projectToken: ${{ secrets.CHROMATIC_PROJECT_TOKEN }}
+
+          # Token de autenticación con GitHub (automáticamente proporcionado)
+          token: ${{ secrets.GITHUB_TOKEN }}
+
+          # Usa la build existente generada por npm si es necesario
+          # (opcional, solo si prefieres compilar tú mismo)
+          # storybookBuildDir: storybook-static
